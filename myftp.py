@@ -28,7 +28,7 @@ def sendCommand(socket, command):
     # Complete
 
     socket.sendall(dataOut) #the sendall method basically sends the endtire command to the FTP server
-    dataIn= socket.recv(4096) #After the command is sent to command, it waits for the server's response and reads upto 4096 bytes
+    dataIn = socket.recv(4096) #After the command is sent to command, it waits for the server's response and reads upto 4096 bytes
     data = dataIn.decode("utf-8") # The server's response comes in bytes and 
     # it basically converts the bytes received from server to string. 
 
@@ -44,14 +44,29 @@ def receiveData(clientSocket):
 # If you use passive mode you may want to use this method but you have to complete it
 # You will not be penalized if you don't
 def modePASV(clientSocket):
-    command = "PASV" + "\r\n"
-    # Complete
+
+    command = "PASV" + "\r\n" # command is 'PASV' followed by terminator
+    data = sendCommand(clientSocket, command) # sends PASV mode command to server
+    print(data)
+
     status = 0
-    if data.startswith(""):
+    if data.startswith("227"): # 227 indicates successful PASV initiation
         status = 227
-        # Complete
+
+        # create substring with information only
+        start_index = data.find("(")
+        terminal_index = data.find(")")
+        information = data[start_index+1:terminal_index].split(",")
+
+        ip = f"{information[0]}.{information[1]}.{information[2]}.{information[3]}" # convert ip
+        port = int(information[4]) * 256 + int(information[5]) # calculate port
+
+        print(f"Connecting to {ip} on port {port} for dataSocket!")
+
+        # create new socket for data
+        dataSocket = socket(AF_INET, SOCK_STREAM)
         dataSocket.connect((ip, port))
-        
+
     return status, dataSocket
 
     
@@ -85,7 +100,7 @@ def main():
         status = 220
         print("Sending username")
         # COMPLETE
-        dataIn = sendCommand(clientSocket, "USERNAME " + username + "\r\n")
+        dataIn = sendCommand(clientSocket, "USER " + username + "\r\n") # corrected mistake, should be 'USER' not 'USERNAME'
         print(dataIn)
 
       
@@ -93,7 +108,7 @@ def main():
             status = 331
             # COMPLETE
             print("Sending password")
-            dataIn = sendCommand(clientSocket, "PASSWORD " + password + "\r\n")
+            dataIn = sendCommand(clientSocket, "PASS " + password + "\r\n") # corrected mistake, should be 'PASS' not 'PASSWORD'
             
             print(dataIn)
             if dataIn.startswith("230"): # If the server responses with 230, it means the login is successful.
@@ -108,6 +123,7 @@ def main():
         # COMPLETE
         pasvStatus, dataSocket = modePASV(clientSocket)
         if pasvStatus == 227:
+            pass
             # COMPLETE
     
     print("Disconnecting...")
