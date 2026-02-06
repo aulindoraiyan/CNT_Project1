@@ -161,13 +161,6 @@ def main():
                 print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
                 continue
             
-
-                
-
-        pasvStatus, dataSocket = modePASV(clientSocket)
-        if pasvStatus == 227:
-            pass
-            # COMPLETE
     
     print("Disconnecting...")
     
