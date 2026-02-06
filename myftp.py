@@ -132,6 +132,11 @@ def main():
 
             if cmd == "quit":
                 #implementation required 
+                quitFTP(clientSocket)
+                print("Disconnected from the server......")
+                clientSocket.close()
+                sys.exit(0)
+
             elif cmd == "cd":
                 # implementation required
             
@@ -160,22 +165,8 @@ def main():
             else:
                 print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
                 continue
-            
-
-                
-
-        pasvStatus, dataSocket = modePASV(clientSocket)
-        if pasvStatus == 227:
-            pass
-            # COMPLETE
     
-    print("Disconnecting...")
     
-
-    clientSocket.close()
-    dataSocket.close()
-    
-    sys.exit()#Terminate the program after sending the corresponding data
 
 main()
 
