@@ -117,14 +117,50 @@ def main():
     
     #************ Raiyan's Work Ends  for phase 1************************* #
 
+    if dataIn.startswith("230"):
+        status = 230
        
     if status == 230:
         # It is your choice whether to use ACTIVE or PASV mode. In any event:
         # COMPLETE
-        pasvStatus, dataSocket = modePASV(clientSocket)
-        if pasvStatus == 227:
-            pass
-            # COMPLETE
+        while True:
+            cmdline = input("myftp> ").strip()
+            if not cmdline:
+                continue
+            parts = cmdline.split()
+            cmd = parts[0].lower()
+
+            if cmd == "quit":
+                #implementation required 
+            elif cmd == "cd":
+                # implementation required
+            
+            elif cmd == "ls":
+                # implementation required
+                pasvStatus, dataSocket = modePASV(clientSocket)
+                if pasvStatus == 227:
+                    pass
+                    # COMPLETE
+            
+            elif cmd == "get":
+                # implementation required
+                pasvStatus, dataSocket = modePASV(clientSocket)
+                if pasvStatus == 227:
+                    pass
+                    # COMPLETE
+            
+            elif cmd == "put":
+                # implementation required
+                pasvStatus, dataSocket = modePASV(clientSocket)
+                if pasvStatus == 227:
+                    pass
+                    # COMPLETE
+            elif cmd == "delete":
+                # implementation required
+            else:
+                print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
+                continue
+            
     
     print("Disconnecting...")
     
