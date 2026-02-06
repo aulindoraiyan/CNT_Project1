@@ -129,9 +129,16 @@ def main():
                 continue
             parts = cmdline.split()
             cmd = parts[0].lower()
-
+            
+            # ************Raiyan's work start on Phase 2******** #
             if cmd == "quit":
                 #implementation required 
+                quitFTP(clientSocket)
+                print("Disconnected from the server......")
+                clientSocket.close()
+                sys.exit(0)
+            # ************Raiyan's work end on Phase 2******** #
+
             elif cmd == "cd":
                 # implementation required
             
@@ -160,15 +167,8 @@ def main():
             else:
                 print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
                 continue
-            
     
-    print("Disconnecting...")
     
-
-    clientSocket.close()
-    dataSocket.close()
-    
-    sys.exit()#Terminate the program after sending the corresponding data
 
 main()
 
