@@ -132,6 +132,7 @@ def main():
             
             # ************Raiyan's work start on Phase 2******** #
             if cmd == "quit":
+                pass # remove when function is implemented!
                 #implementation required 
                 quitFTP(clientSocket)
                 print("Disconnected from the server......")
@@ -140,6 +141,7 @@ def main():
             # ************Raiyan's work end on Phase 2******** #
 
             elif cmd == "cd":
+                pass # remove when function is implemented!
                 # implementation required
             
             elif cmd == "ls":
@@ -150,19 +152,58 @@ def main():
                     # COMPLETE
             
             elif cmd == "get":
-                # implementation required
-                pasvStatus, dataSocket = modePASV(clientSocket)
-                if pasvStatus == 227:
-                    pass
-                    # COMPLETE
-            
+                pasvStatus, dataSocket = modePASV(clientSocket) # establish PASV
+
+                # extract full file name
+                filename = " ".join(parts[1:])
+                if filename.startswith('"') and filename.endswith('"'):
+                    filename = filename[1:-1]
+
+                if pasvStatus == 227: # checks is pasv is established
+                    processData = sendCommand(clientSocket, f"RETR {filename}\r\n")
+                    print(processData)
+
+                    if processData.startswith("150"): # data connection opened
+                        data = bytearray()
+
+                        # continue to read data until data is exhausted
+                        while chunk := dataSocket.recv(4096):
+                            data.extend(chunk)
+
+                        # save data to file
+                        with open(filename, "wb") as file:
+                            file.write(data)
+
+                    dataSocket.close()
+
+                    # if data was 550, 226 cannot be returned. therefore check is required to prevent program from hang
+                    if not processData.startswith("550"):
+                        print(receiveData(clientSocket))
+
             elif cmd == "put":
-                # implementation required
-                pasvStatus, dataSocket = modePASV(clientSocket)
-                if pasvStatus == 227:
-                    pass
-                    # COMPLETE
+                pasvStatus, dataSocket = modePASV(clientSocket) # establish PASV
+
+                # extract full file name
+                filename = " ".join(parts[1:])
+                if filename.startswith('"') and filename.endswith('"'):
+                    filename = filename[1:-1]
+
+                if pasvStatus == 227: # checks if pasv is established
+                    processData = sendCommand(clientSocket, f"STOR {filename}\r\n")
+                    print(processData)
+
+                    if processData.startswith("150"):
+                        try:
+                            dataSocket.sendfile(open(f"{filename}", "rb"))
+                        except FileNotFoundError:
+                            print("File not found! No data sent!")
+
+                        dataSocket.close()
+
+                    print(receiveData(clientSocket))
+
             elif cmd == "delete":
+                pass # remove when function is implemented!
                 # implementation required
             else:
                 print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
