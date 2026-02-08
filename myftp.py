@@ -141,8 +141,13 @@ def main():
             # ************Raiyan's work end on Phase 2******** #
 
             elif cmd == "cd":
-                pass # remove when function is implemented!
-                # implementation required
+                # extracts full directory name
+                directory = " ".join(parts[1:])
+                if directory.startswith('"') and directory.endswith('"'):
+                    directory = directory[1:-1]
+                # sends CWD command to server and prints response
+                processData = sendCommand(clientSocket, f"CWD {directory}\r\n")
+                print(processData)
             
             elif cmd == "ls":
                 # implementation required
@@ -203,8 +208,13 @@ def main():
                     print(receiveData(clientSocket))
 
             elif cmd == "delete":
-                pass # remove when function is implemented!
-                # implementation required
+                # extract full file name
+                filename = " ".join(parts[1:])
+                if filename.startswith('"') and filename.endswith('"'):
+                    filename = filename[1:-1]
+                # sends DELE command to server and prints response
+                processData = sendCommand(clientSocket, f"DELE {filename}\r\n")
+                print(processData)
             else:
                 print("Invalid command. Supported commands are: ls, cd, get, put, quit.")
                 continue
