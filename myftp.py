@@ -153,8 +153,18 @@ def main():
                 # implementation required
                 pasvStatus, dataSocket = modePASV(clientSocket)
                 if pasvStatus == 227:
-                    pass
-                    # COMPLETE
+                    processData = sendCommand(clientSocket, "LIST\r\n")
+                    print(processData)
+                    if processData.startswith("150"):  # data connection opened
+                        data = bytearray()
+                        # continue to read data until data is exhausted
+                        while chunk := dataSocket.recv(4096):
+                            data.extend(chunk)
+                        # print the directory listing
+                        print(data.decode("utf-8"))
+                        dataSocket.close()
+                        # receive final status message (typically 226 - transfer complete)
+                        print(receiveData(clientSocket))
             
             elif cmd == "get":
                 pasvStatus, dataSocket = modePASV(clientSocket) # establish PASV
